@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumi VPN — Быстрый и надежный VPN</title>
+    <style>
+        :root {
+            --bg-color: #090d16;
+            --card-bg: #131b2e;
+            --card-border: #233152;
+            --accent: #00f2fe;
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.12), transparent 50%);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .plan-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            cursor: pointer;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 30px rgba(0, 242, 254, 0.15);
+        }
+
+        .plan-card.popular {
+            border-color: #4facfe;
+            box-shadow: 0 0 25px rgba(79, 172, 254, 0.12);
+        }
+
+        .badge {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-gradient);
+            color: #090d16;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .plan-duration {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .plan-price {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .plan-subtext {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            min-height: 20px;
+        }
+
+        .features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 28px;
+            color: #d1d9e6;
+            font-size: 0.95rem;
+        }
+
+        .features li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .features li::before {
+            content: "✓";
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .btn {background: var(--accent-gradient);
+            color: #090d16;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        #payment-screen {
+            display: none;
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px 24px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .selected-summary {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-title {
+            text-align: left;
+        }
+
+        .summary-title p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .summary-title h3 {
+            font-size: 1.2rem;
+            margin-top: 4px;
+        }
+
+        .summary-price {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .payment-btn {
+            background: #1a243b;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .payment-btn:hover {
+            border-color: var(--accent);
+            background: #202c47;
+        }
+
+        .payment-btn span.arrow {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .back-btn:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">LUMI VPN</div>
+        <p class="subtitle">Высокая скорость, низкий пинг и полная анонимность</p>
+
+        <!-- ЭКРАН 1: ВЫБОР ТАРИФА -->
+        <div id="plans-screen">
+            <div class="plans-grid">
+                
+                <div class="plan-card" onclick="selectPlan('1 месяц', 60, '1m')">
+                    <div>
+                        <div class="plan-duration">1 Месяц</div>
+                        <div class="plan-price">60 ₽</div>
+                        <div class="plan-subtext">Отличный старт для теста</div>
+                        <ul class="features">
+                            <li>Безлимитный трафик</li>
+                            <li>Высокая скорость</li>
+                            <li>Доступ ко всем сайтам</li>
+                        </ul>
+                    </div>
+                    <button class="btn">Выбрать</button>
+                </div>
+
+                <div class="plan-card popular" onclick="selectPlan('3 месяца', 150, '3m')">
+                    <div class="badge">Популярный</div>
+                    <div><div class="plan-duration">3 Месяца</div>
+                        <div class="plan-price">150 ₽</div>
+                        <div class="plan-subtext">Всего 50 ₽ в месяц (Выгода 17%)</div>
+                        <ul class="features">
+                            <li>Безлимитный трафик</li>
+                            <li>Высокая скорость</li>
+                            <li>Доступ ко всем сайтам</li>
+                        </ul>
+                    </div>
+                    <button class="btn">Выбрать</button>
+                </div>
+
+                <div class="plan-card" onclick="selectPlan('1 год', 500, '1y')">
+                    <div class="badge">Максимальная выгода</div>
+                    <div>
+                        <div class="plan-duration">1 Год</div>
+                        <div class="plan-price">500 ₽</div>
+                        <div class="plan-subtext">Всего ~41 ₽ в месяц (Выгода 30%)</div>
+                        <ul class="features">
+                            <li>Безлимитный трафик</li>
+                            <li>Максимальный приоритет</li>
+                            <li>Доступ ко всем сайтам</li>
+                        </ul>
+                    </div>
+                    <button class="btn">Выбрать</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ЭКРАН 2: ВЫБОР СПОСОБА ОПЛАТЫ -->
+        <div id="payment-screen">
+            <h2 style="margin-bottom: 20px;">Выберите способ оплаты</h2>
+            
+            <div class="selected-summary">
+                <div class="summary-title">
+                    <p>Ваш тариф:</p>
+                    <h3 id="chosen-plan-name">1 месяц</h3>
+                </div>
+                <div class="summary-price" id="chosen-plan-price">60 ₽</div>
+            </div>
+
+            <div class="payment-methods">
+                <button class="payment-btn" onclick="goToPayment('sbp')">
+                    <span>⚡ СБП (Система быстрых платежей)</span>
+                    <span class="arrow">→</span>
+                </button>
+                <button class="payment-btn" onclick="goToPayment('card')">
+                    <span>💳 Банковская карта (МИР / Visa / MC)</span>
+                    <span class="arrow">→</span>
+                </button>
+                <button class="payment-btn" onclick="goToPayment('tg')">
+                    <span>✈️ Оплата через Telegram-бота</span>
+                    <span class="arrow">→</span>
+                </button>
+                <button class="payment-btn" onclick="goToPayment('crypto')">
+                    <span>🪙 Криптовалюта (USDT / TON)</span>
+                    <span class="arrow">→</span>
+                </button>
+            </div>
+
+            <button class="back-btn" onclick="goBack()">← Вернуться к выбору тарифа</button>
+        </div>
+
+    </div>
+
+    <script>
+        let currentPlanCode = '';
+        let currentPrice = 0;
+
+        function selectPlan(planName, price, planCode) {
+            currentPlanCode = planCode;
+            currentPrice = price;
+
+            document.getElementById('chosen-plan-name').innerText = 'Lumi VPN — ' + planName;
+            document.getElementById('chosen-plan-price').innerText = price + ' ₽';
+
+            document.getElementById('plans-screen').style.display = 'none';
+            document.getElementById('payment-screen').style.display = 'block';
+        }
+
+        function goBack() {
+            document.getElementById('payment-screen').style.display = 'none';
+            document.getElementById('plans-screen').style.display = 'block';
+        }
+
+        function goToPayment(method) {
+            // Замени YOUR_BOT_USERNAME на юзернейм своего бота без @
+            const botUsername = 'YOUR_BOT_USERNAME'; 
+            
+            if (method === 'tg') {
+                window.location.href = `https://t.me/${botUsername}?start=pay_${currentPlanCode}`;
+                return;
+            }
+
+            const paymentLinks = {'sbp': `https://t.me/${botUsername}?start=sbp_${currentPlanCode}`,
+                'card': `https://t.me/${botUsername}?start=card_${currentPlanCode}`,
+                'crypto': `https://t.me/${botUsername}?start=crypto_${currentPlanCode}`
+            };
+
+            window.location.href = paymentLinks[method];
+        }
+    </script>
+
+</body>
+</html>
